@@ -36,7 +36,8 @@ def main():
         
     window.nametowidget("init").grid_remove()
 
-    last = 100000 # initially large, so new will be negative and the first stable reading will be set as the 0 
+    #last = 100000 # initially large, so new will be negative and the first stable reading will be set as the 0 
+    last = 0
     new = 0
     cumul = 0
     table_data = []
@@ -59,18 +60,33 @@ def main():
             last_six = [x[1] for x in data[-5:]]
             last_six.append(reading)
             print (last_six)
-            avg = np.mean(last_six)
-            std = np.std(last_six)
-            if avg > 50 and std < 9: # change back to 50 later
-                last = avg
-                new = avg - data[-1][2]
-                if new > 0:
-                    cumul += new
-                else:
+            #avg = np.mean(last_six)
+            last = float(np.mean(last_six))
+            #std = np.std(last_six)
+            std = float(np.std(last_six))
+            #if avg > 50 and std < 5: # change back to 50 later
+            #    last = avg
+            #    new = avg - data[-1][2]
+            #    if new > 0:
+            #        cumul += new
+            #    else:
+            #        new = 0
+            #    status = "valid"
+            #else:
+            #    status = "rejected"
+            
+            if avg > 50 and std < 5:
+                if abs(last - readings[-1][2]) > 10:
                     new = 0
+                else:
+                    new = (last - readings[-1][2])*0.9
+           
+                cumul += new
                 status = "valid"
             else:
                 status = "rejected"
+                cumul = readings[-1][4]
+                new = 0
 
             #lp.generate_graph(data, window.nametowidget("graph"))
 
